@@ -23,13 +23,29 @@ const server = http.createServer((req, res) => {
 					res.setHeader('Content-type', 'header');
 					res.end(`<html><body><h1>Error: ${fs.filePath} not
 					found</h1></body></html>`);
+					return;
 				}
+				res.statusCode = 200;
+				res.setHeader('Content-type', 'text/html');
+				// read the file and include it in the response
+				fs.createReadStream(filePath).pipe(res);
 			});
+		}
+		else {
+			res.statusCode = 404;
+			res.setHeader('Content-type', 'header');
+			res.end(`<html><body><h1>Error: ${fs.filePath} not
+			an HTML file</h1></body></html>`);
+			return;
 		}
 	}
 	else {
+		res.statusCode = 404;
+		res.setHeader('Content-type', 'header');
+		res.end(`<html><body><h1>Error: ${req.method} not
+		support</h1></body></html>`);
+		return;
 	}
-
 	/*console.log(req.headers);
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html');
